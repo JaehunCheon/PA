@@ -7,9 +7,16 @@ body {
 h1{
     font-size: 40px;
 }
-.SM{
-    position: relative;
-    right: 30px;
+.SM-container{
+    width:80%;
+    padding-right: 5px;
+    text-align: right;
+}
+.input-container{
+    width: 100%;
+}
+#SM{
+    margin: 5px 0;
     font-size: 22px;
 }
 #card-list {
@@ -79,8 +86,8 @@ h1{
 }
 
 #search-container {
-
-    text-align: center;
+    display: flex;
+    
     margin-bottom: 20px;
 }
 
@@ -91,7 +98,7 @@ h1{
 }
 
 #search-button {
-    padding: 10px 20px;
+    padding: 8px 20px;
     font-size: 16px;
     cursor: pointer;
 }
@@ -105,4 +112,27 @@ h1{
     top: 30px;
     left: 20px;
 
+}
+
+#adultfalse{
+    padding-top: 10px;
+    border-radius: 100%;
+    background-color: green;
+    color: transparent;
+    font-size: 1px;
+   
+    position: absolute;
+    top: 30px;
+    right: 50px;
+}
+#adulttrue{
+    padding-top: 10px;
+    border-radius: 100%;
+    background-color: red;
+    color: transparent;
+    font-size: 1px;
+    
+    position: absolute;
+    top: 30px;
+    right: 20px;
 }

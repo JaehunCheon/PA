@@ -1,6 +1,6 @@
 const apiKey = '964358e25ad7a6fc64f2e0c3cd8a68c3';
 const mainContainer = document.getElementById('card-list');
-
+const age = ['true','false'];
 // 메인 페이지에 출력될 카드 이미지, 데이터 가져오기
 function fetchPopularMovies() {
   const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
@@ -47,15 +47,15 @@ const createMovieCard = (movie) => {
 }
 
 // 입력된 검색어 기반으로 영화 검색 하는 함수
-function searchMovies() {
+function searchMovies(n) {
   const searchTerm = document.getElementById('search-input').value.trim(); //검색창에 입력된 데이터 좌우공백 없애고 SearchTerm에 할당  
   if (searchTerm === '') {
         alert("검색어를 입력하세요");
         location.reload();
     return;
   }
-
-  const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${searchTerm}&page=1&include_adult=false`;
+  
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${searchTerm}&page=1&include_adult=${age[n]}`;
 
   fetch(url)
     .then(response => response.json())
@@ -79,9 +79,7 @@ function displaySearchResults(results) {
   });
 }
 
-function ToMainpage() {
-
-}
+document.getElementById('SM').innerHTML = `영화 검색 : `;
 
 // 메인페이지 로드시 데이터 가져오기
 document.addEventListener('DOMContentLoaded', fetchPopularMovies);
@@ -97,4 +95,12 @@ document.getElementById('search-input').addEventListener('keydown', (e) => {
 });
 document.getElementById('reloadButton').addEventListener('click', function () {
   location.reload();
+});
+document.getElementById('adulttrue').addEventListener('click', function(){
+  const n = 0;
+  searchMovies(n);
+});
+document.getElementById('adultfalse').addEventListener('click', function(){
+  const n = 1;
+  searchMovies(n);
 });
