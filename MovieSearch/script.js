@@ -1,6 +1,6 @@
 const apiKey = '964358e25ad7a6fc64f2e0c3cd8a68c3';
 const mainContainer = document.getElementById('card-list');
-const age = ['true', 'false'];
+let movies = [];
 
 // 메인 페이지에 출력될 카드 이미지, 데이터 가져오기
 const fetchPopularMovies = async () => {
@@ -13,17 +13,17 @@ const fetchPopularMovies = async () => {
     }
 
     const data = await response.json();
-    const movies = data.results;
-    displayPopularMovies(movies);
-    return movies;
+    movies = data.results;
+    displayPopularMovies();
+    
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 }
 
 // 메인 페이지에 카드 리스트 출력
-const displayPopularMovies = (movies) => {
-
+const displayPopularMovies = () => {
+  mainContainer.innerHTML = '';
   movies.forEach(movie => {
     const movieCard = createMovieCard(movie);
     mainContainer.appendChild(movieCard);
@@ -57,15 +57,15 @@ const createMovieCard = (movie) => {
 }
 
 // 입력된 검색어 기반으로 영화 검색 하는 함수
-function searchMovies(searchTerm, movies) {
+const searchMovies = (searchTerm)=> {
   const moviefilter = movies.filter(movie => {
     return movie.title.toLowerCase().includes(searchTerm.toLowerCase());
-  })
+  });
   displaySearchResults(moviefilter);
 }
 
 // 검색결과 출력 함수
-function displaySearchResults(results) {
+const displaySearchResults = (results) => {
 
   mainContainer.innerHTML = ''; // 결과 창 비우기
 
@@ -74,7 +74,7 @@ function displaySearchResults(results) {
     return;
   }
 
-  results.forEach(movie => { //
+  results.forEach(movie => {
     const movieCard = createMovieCard(movie);
     mainContainer.appendChild(movieCard);
   });
@@ -87,8 +87,7 @@ document.getElementById('reloadButton').addEventListener('click', function () {
 
 
 // 메인페이지 로드시 데이터 가져오기
-document.addEventListener('DOMContentLoaded', async function () {
-  const movies = await fetchPopularMovies();
+document.addEventListener('DOMContentLoaded',fetchPopularMovies);
   // 검색 버튼 누를시 영화 검색
   document.getElementById('search-button').addEventListener('click', function () {
     const searchTerm = document.getElementById('search-input').value.trim();
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       alert('검색어를 입력하세요');
       location.reload();
     } else {
-      searchMovies(searchTerm, movies);
+      searchMovies(searchTerm);
     }
   });
 
@@ -107,9 +106,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         alert('검색어를 입력하세요');
         location.reload();
       } else {
-        searchMovies(searchTerm, movies);
+        searchMovies(searchTerm);
       }
     }
   });
-});
+
 
