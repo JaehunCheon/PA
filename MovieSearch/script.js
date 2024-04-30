@@ -1,19 +1,29 @@
 const apiKey = '964358e25ad7a6fc64f2e0c3cd8a68c3';
 const mainContainer = document.getElementById('card-list');
-const age = ['true','false'];
+const age = ['true', 'false'];
+
 // 메인 페이지에 출력될 카드 이미지, 데이터 가져오기
-function fetchPopularMovies() {
+const fetchPopularMovies = async () => {
   const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => displayPopularMovies(data.results))
-    .catch(error => console.error('Error fetching data:', error));
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    const movies = data.results;
+    displayPopularMovies(movies);
+    return movies;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 }
 
 // 메인 페이지에 카드 리스트 출력
-function displayPopularMovies(movies) {
-  
+const displayPopularMovies = (movies) => {
+
   movies.forEach(movie => {
     const movieCard = createMovieCard(movie);
     mainContainer.appendChild(movieCard);
@@ -47,25 +57,16 @@ const createMovieCard = (movie) => {
 }
 
 // 입력된 검색어 기반으로 영화 검색 하는 함수
-function searchMovies(n) {
-  const searchTerm = document.getElementById('search-input').value.trim(); //검색창에 입력된 데이터 좌우공백 없애고 SearchTerm에 할당  
-  if (searchTerm === '') {
-        alert("검색어를 입력하세요");
-        location.reload();
-    return;
-  }
-  
-  const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${searchTerm}&page=1&include_adult=${age[n]}`;
-
-  fetch(url)
-    .then(response => response.json())
-    .then(data => displaySearchResults(data.results))
-    .catch(error => console.error('Error fetching data:', error));
+function searchMovies(searchTerm, movies) {
+  const moviefilter = movies.filter(movie => {
+    return movie.title.toLowerCase().includes(searchTerm.toLowerCase());
+  })
+  displaySearchResults(moviefilter);
 }
 
 // 검색결과 출력 함수
 function displaySearchResults(results) {
-  
+
   mainContainer.innerHTML = ''; // 결과 창 비우기
 
   if (results.length === 0) {  // results 값 
@@ -80,27 +81,35 @@ function displaySearchResults(results) {
 }
 
 document.getElementById('SM').innerHTML = `영화 검색 : `;
-
-// 메인페이지 로드시 데이터 가져오기
-document.addEventListener('DOMContentLoaded', fetchPopularMovies);
-
-// 검색 버튼 누를시 영화 검색
-document.getElementById('search-button').addEventListener('click', function(){
-  searchMovies();
-});
-document.getElementById('search-input').addEventListener('keydown', (e) => {
-   if(e.key === 'Enter'){ 
-  searchMovies();
-  }
-});
 document.getElementById('reloadButton').addEventListener('click', function () {
   location.reload();
 });
-document.getElementById('adulttrue').addEventListener('click', function(){
-  const n = 0;
-  searchMovies(n);
+
+
+// 메인페이지 로드시 데이터 가져오기
+document.addEventListener('DOMContentLoaded', async function () {
+  const movies = await fetchPopularMovies();
+  // 검색 버튼 누를시 영화 검색
+  document.getElementById('search-button').addEventListener('click', function () {
+    const searchTerm = document.getElementById('search-input').value.trim();
+    if (searchTerm === '') {
+      alert('검색어를 입력하세요');
+      location.reload();
+    } else {
+      searchMovies(searchTerm, movies);
+    }
+  });
+
+  document.getElementById('search-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const searchTerm = document.getElementById('search-input').value.trim();
+      if (searchTerm === '') {
+        alert('검색어를 입력하세요');
+        location.reload();
+      } else {
+        searchMovies(searchTerm, movies);
+      }
+    }
+  });
 });
-document.getElementById('adultfalse').addEventListener('click', function(){
-  const n = 1;
-  searchMovies(n);
-});
+
